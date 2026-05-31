@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -44,10 +45,18 @@
         .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85em; color: #555; }
         
-        input { 
+        input, select { 
             width: 100%; padding: 12px; margin-top: 5px; border: 2px solid #eee; border-radius: 10px; 
             box-sizing: border-box; font-size: 1em; background-color: #f9f9f9; color: var(--dojo-black);
             -webkit-appearance: none; /* Rimuove stili strani su iOS */
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M0 3l5 5 5-5z' fill='%23121212'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 30px;
+            cursor: pointer;
         }
 
         /* Stile per i campi bloccati */
@@ -62,12 +71,26 @@
         th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9em; }
         th { color: var(--dojo-green); font-weight: bold; text-transform: uppercase; font-size: 0.75em; }
         
-        /* Larghezze colonne su PC riadattate per 5 colonne */
+        /* Larghezze colonne su PC */
         th:nth-child(1), td:nth-child(1) { width: 28%; }
         th:nth-child(2), td:nth-child(2) { width: 20%; }
         th:nth-child(3), td:nth-child(3) { width: 18%; }
         th:nth-child(4), td:nth-child(4) { width: 17%; }
         th:nth-child(5), td:nth-child(5) { width: 17%; }
+
+        /* Struttura riga Terminali */
+        .pos-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fdfdfd;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+        }
+        .pos-title { font-weight: 700; color: var(--dojo-green); font-size: 1em; }
 
         .result-box { 
             background: var(--dojo-black); padding: 25px; border-radius: 15px; margin-top: 30px; 
@@ -92,11 +115,11 @@
         @media screen and (max-width: 600px) {
             body { padding: 8px; }
             #pdf-content { padding: 15px; border-radius: 12px; }
-            .grid-inputs { grid-template-columns: 1fr; gap: 5px; } /* Incolonna cellulare ed email */
+            .grid-inputs { grid-template-columns: 1fr; gap: 5px; }
             
-            /* Trasformiamo la tabella in schede verticali leggibili */
+            /* Tabella schede verticali */
             table, thead, tbody, th, td, tr { display: block; width: 100% !important; box-sizing: border-box; }
-            thead { display: none; } /* Nascondiamo la testata della tabella vecchia */
+            thead { display: none; }
             
             tr { 
                 background: #fcfcfc; 
@@ -115,26 +138,32 @@
                 font-size: 1em;
             }
             
-            /* Usiamo i selettori CSS per ricreare i nomi dei campi a sinistra su mobile */
             td:nth-child(1) { font-weight: bold; color: var(--dojo-green); border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 8px; font-size: 1.1em; }
             td:nth-child(2)::before { content: "Transato (€):"; color: #666; font-size: 0.85em; font-weight: 600; }
             td:nth-child(3)::before { content: "N° Transazioni:"; color: #666; font-size: 0.85em; font-weight: 600; }
             td:nth-child(4)::before { content: "Comm. %:"; color: #666; font-size: 0.85em; font-weight: 600; }
             td:nth-child(5)::before { content: "Fisso €:"; color: #666; font-size: 0.85em; font-weight: 600; }
             
-            /* Sistemiamo la larghezza degli input dentro le schede mobile */
             td input { width: 55% !important; margin-top: 0; padding: 8px; }
+
+            /* Griglia mobile Terminali */
+            .pos-grid { grid-template-columns: 1fr; gap: 5px; background: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+            .pos-title { font-weight: bold; color: var(--dojo-green); border-bottom: 2px solid #eee; padding-bottom: 5px; font-size: 1.05em; }
+            .pos-grid div { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+            .pos-grid div label { margin-top: 0; width: 40%; color: #666; font-weight: 600; }
+            .pos-grid div select, .pos-grid div input { width: 55% !important; margin-top: 0; padding: 8px; }
             
             .savings-highlight { font-size: 1.9em; }
         }
 
-        /* Gestione layout bottoni paralleli su tablet/PC */
+        /* Layout PC */
         @media screen and (min-width: 601px) {
             .no-print { flex-direction: row; }
             button { margin-top: 10px; }
+            .pos-grid-header { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 15px; margin-top: 15px; font-size: 0.75em; font-weight: bold; color: var(--dojo-green); text-transform: uppercase; padding-left: 10px; }
         }
 
-        /* REGOLA PER LA STAMPA / SALVATAGGIO PDF */
+        /* REGOLA PER LA STAMPA */
         @media print {
             body { background: white !important; color: black !important; padding: 0; margin: 0; }
             #pdf-content { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
@@ -145,6 +174,10 @@
             td, th { display: table-cell !important; padding: 8px !important; border-bottom: 1px solid #eee !important; }
             td::before { display: none !important; }
             td input { width: 100% !important; background: transparent !important; border: 1px solid #ccc !important; padding: 6px !important; }
+            .pos-grid { display: grid !important; grid-template-columns: 1.5fr 1fr 1fr !important; gap: 15px !important; border-bottom: 1px solid #eee !important; padding: 6px 0 !important; background: transparent !important; border-radius: 0 !important; }
+            .pos-grid-header { display: grid !important; grid-template-columns: 1.5fr 1fr 1fr !important; gap: 15px !important; padding-left: 0 !important; }
+            .pos-grid div label { display: none !important; }
+            .pos-grid div select, .pos-grid div input { width: 100% !important; background: transparent !important; border: 1px solid #ccc !important; padding: 6px !important; }
             .no-print { display: none !important; }
         }
     </style>
@@ -246,6 +279,31 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="section">
+        <h3>Terminali Dojo</h3>
+        <div class="pos-grid-header">
+            <div>Modello POS</div>
+            <div>Canone Mese (€)</div>
+            <div>Quantità</div>
+        </div>
+        
+        <div class="pos-grid">
+            <span class="pos-title">Dojo Go</span>
+            <div><label>Canone:</label><select id="c_dojo_go"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_go" value="0" min="0"></div>
+        </div>
+        <div class="pos-grid">
+            <span class="pos-title">Dojo Pocket</span>
+            <div><label>Canone:</label><select id="c_dojo_pocket"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_pocket" value="0" min="0"></div>
+        </div>
+        <div class="pos-grid">
+            <span class="pos-title">Dojo Wired</span>
+            <div><label>Canone:</label><select id="c_dojo_wired"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_wired" value="0" min="0"></div>
+        </div>
     </div>
 
     <div class="result-box" id="risultato">
@@ -359,6 +417,19 @@ function generaConfronto() {
     // Calcolo American Express
     costoDojo += (t_amex * p_amex) / 100;
     costoDojo += (n_amex * f_amex);
+
+    // CALCOLO SINGOLI CANONI INDIPENDENTI TERMINALI
+    let c_go = parseFloat(document.getElementById('c_dojo_go').value) || 0;
+    let q_go = parseInt(document.getElementById('q_dojo_go').value) || 0;
+    costoDojo += (c_go * q_go);
+
+    let c_pocket = parseFloat(document.getElementById('c_dojo_pocket').value) || 0;
+    let q_pocket = parseInt(document.getElementById('q_dojo_pocket').value) || 0;
+    costoDojo += (c_pocket * q_pocket);
+
+    let c_wired = parseFloat(document.getElementById('c_dojo_wired').value) || 0;
+    let q_wired = parseInt(document.getElementById('q_dojo_wired').value) || 0;
+    costoDojo += (c_wired * q_wired);
 
     document.getElementById('resAttuale').innerText = costoAttuale.toFixed(2);
     document.getElementById('resNuovo').innerText = costoDojo.toFixed(2);
