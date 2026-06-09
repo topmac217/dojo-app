@@ -11,13 +11,13 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo-dojo-vfinal.png?v=1000">
     
     <style>
         :root {
             --dojo-green: #004d40;
             --dojo-black: #121212;
             --dojo-white: #ffffff;
+            --dojo-highlight: #4ade80;
         }
 
         body { 
@@ -42,9 +42,10 @@
         h3 { color: var(--dojo-green); margin-top: 25px; font-size: 1.1em; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 8px; }
         
         .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-inputs-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.85em; color: #555; }
         
-        input, select { 
+        input[type="text"], input[type="number"], input[type="tel"], input[type="email"], select { 
             width: 100%; padding: 12px; margin-top: 5px; border: 2px solid #eee; border-radius: 10px; 
             box-sizing: border-box; font-size: 1em; background-color: #f9f9f9; color: var(--dojo-black);
             -webkit-appearance: none;
@@ -58,14 +59,51 @@
             cursor: pointer;
         }
 
-        input[readonly] {
-            background-color: #f0f0f0;
-            color: #999;
+        input[readonly], input[disabled], select[disabled] {
+            background-color: #e9e9e9;
+            color: #777;
             cursor: not-allowed;
             border: 1px dashed #ccc;
+            opacity: 0.6;
         }
 
-        /* TABELLA DESKTOP COERENTE */
+        input[type="checkbox"] {
+            width: 22px !important;
+            height: 22px !important;
+            margin: 0 !important;
+            cursor: pointer;
+            accent-color: var(--dojo-green);
+            -webkit-appearance: checkbox !important;
+            appearance: checkbox !important;
+        }
+
+        .service-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            background: #fdfdfd;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .service-title { font-weight: 600; color: var(--dojo-black); font-size: 0.95em; }
+        .service-cost { font-weight: 700; color: var(--dojo-green); font-size: 0.95em; }
+
+        .pos-grid {
+            display: grid;
+            grid-template-columns: auto 1.2fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fdfdfd;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+        }
+        .pos-title { font-weight: 700; color: var(--dojo-black); font-size: 1em; }
+
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.95em; }
         th { color: var(--dojo-green); font-weight: bold; text-transform: uppercase; font-size: 0.75em; }
@@ -75,78 +113,40 @@
         th:nth-child(3), td:nth-child(3) { width: 20%; }
         th:nth-child(4), td:nth-child(4) { width: 17%; }
         th:nth-child(5), td:nth-child(5) { width: 18%; }
-
-        /* Struttura riga Terminali */
-        .pos-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr;
-            gap: 15px;
-            align-items: center;
-            margin-top: 10px;
-            padding: 10px;
-            background: #fdfdfd;
-            border: 1px solid #eaeaea;
-            border-radius: 12px;
-        }
-        .pos-title { font-weight: 700; color: var(--dojo-green); font-size: 1em; }
+        td input { padding: 8px; margin-top: 0; }
 
         .result-box { 
             background: var(--dojo-black); padding: 25px; border-radius: 15px; margin-top: 30px; 
             color: var(--dojo-white); display: none; 
         }
 
-        .savings-highlight { font-size: 2.2em; color: #4ade80; font-weight: 800; margin: 10px 0; }
+        .savings-highlight { font-size: 2.2em; color: var(--dojo-highlight); font-weight: 800; margin: 10px 0; }
         
         .no-print { max-width: 850px; margin: 15px auto; display: flex; flex-direction: column; gap: 10px; }
 
-        button { 
+        button, .link-btn { 
             width: 100%; background: var(--dojo-black); color: var(--dojo-white); padding: 16px; border: none; 
             border-radius: 12px; font-size: 1em; font-weight: bold; text-transform: uppercase;
             cursor: pointer; transition: all 0.2s; border: 2px solid var(--dojo-black);
-            box-sizing: border-box;
+            box-sizing: border-box; text-align: center; text-decoration: none; display: block;
         }
 
         button.pdf-btn { background: var(--dojo-white); color: var(--dojo-black); border: 2px solid var(--dojo-black); }
-        button:hover { opacity: 0.9; }
+        button:hover, .link-btn:hover { opacity: 0.9; }
 
-        /* OTTIMIZZAZIONE RESPONSIVE MOBILE */
         @media screen and (max-width: 600px) {
             body { padding: 8px; }
             #pdf-content { padding: 15px; border-radius: 12px; }
             .grid-inputs { grid-template-columns: 1fr; gap: 5px; }
+            .grid-inputs-3 { grid-template-columns: 1fr; gap: 5px; }
             
-            /* Trasformazione della tabella in schede solo su schermi piccoli */
             table, thead, tbody, th, td, tr { display: block; width: 100% !important; box-sizing: border-box; }
             thead { display: none; }
             
-            tr { 
-                background: #fcfcfc; 
-                border: 1px solid #e0e0e0; 
-                border-radius: 12px; 
-                margin-bottom: 15px; 
-                padding: 12px;
-            }
+            tr { background: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 12px; margin-bottom: 15px; padding: 12px; }
+            td { border-bottom: none; padding: 6px 0; display: flex; align-items: center; justify-content: space-between; font-size: 1em; width: 100% !important; }
             
-            td { 
-                border-bottom: none; 
-                padding: 6px 0; 
-                display: flex; 
-                align-items: center; 
-                justify-content: space-between;
-                font-size: 1em;
-                width: 100% !important;
-            }
-            
-            td:nth-child(1) { 
-                font-weight: bold; 
-                color: var(--dojo-green); 
-                border-bottom: 2px solid #eee; 
-                padding-bottom: 8px; 
-                margin-bottom: 8px; 
-                font-size: 1.1em; 
-                display: block !important; 
-                text-align: left;
-            }
+            td:nth-child(1) { font-weight: bold; color: var(--dojo-green); border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 8px; font-size: 1.1em; display: block !important; text-align: left; }
             td:nth-child(2)::before { content: "Transato (€):"; color: #666; font-size: 0.85em; font-weight: 600; }
             td:nth-child(3)::before { content: "N° Transazioni:"; color: #666; font-size: 0.85em; font-weight: 600; }
             td:nth-child(4)::before { content: "Comm. %:"; color: #666; font-size: 0.85em; font-weight: 600; }
@@ -154,7 +154,6 @@
             
             td input { width: 55% !important; margin-top: 0; padding: 8px; }
 
-            /* Griglia mobile Terminali */
             .pos-grid { grid-template-columns: 1fr; gap: 5px; background: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
             .pos-title { font-weight: bold; color: var(--dojo-green); border-bottom: 2px solid #eee; padding-bottom: 5px; font-size: 1.05em; }
             .pos-grid div { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -166,11 +165,10 @@
 
         @media screen and (min-width: 601px) {
             .no-print { flex-direction: row; }
-            button { margin-top: 10px; }
-            .pos-grid-header { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 15px; margin-top: 15px; font-size: 0.75em; font-weight: bold; color: var(--dojo-green); text-transform: uppercase; padding-left: 10px; }
+            button, .link-btn { margin-top: 10px; }
+            .pos-grid-header { display: grid; grid-template-columns: 40px 1.5fr 1fr 1fr; gap: 15px; margin-top: 15px; font-size: 0.75em; font-weight: bold; color: var(--dojo-green); text-transform: uppercase; padding-left: 10px; }
         }
 
-        /* REGOLA PER LA STAMPA */
         @media print {
             body { background: white !important; color: black !important; padding: 0; margin: 0; }
             #pdf-content { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
@@ -181,11 +179,12 @@
             td, th { display: table-cell !important; padding: 8px !important; border-bottom: 1px solid #eee !important; }
             td::before { display: none !important; }
             td input { width: 100% !important; background: transparent !important; border: 1px solid #ccc !important; padding: 6px !important; }
-            .pos-grid { display: grid !important; grid-template-columns: 1.5fr 1fr 1fr !important; gap: 15px !important; border-bottom: 1px solid #eee !important; padding: 6px 0 !important; background: transparent !important; border-radius: 0 !important; }
-            .pos-grid-header { display: grid !important; grid-template-columns: 1.5fr 1fr 1fr !important; gap: 15px !important; padding-left: 0 !important; }
+            .pos-grid { display: grid !important; grid-template-columns: 40px 1.5fr 1fr 1fr !important; gap: 15px !important; border-bottom: 1px solid #eee !important; padding: 6px 0 !important; background: transparent !important; border-radius: 0 !important; }
+            .pos-grid-header { display: grid !important; grid-template-columns: 40px 1.5fr 1fr 1fr !important; gap: 15px !important; padding-left: 0 !important; }
             .pos-grid div label { display: none !important; }
             .pos-grid div select, .pos-grid div input { width: 100% !important; background: transparent !important; border: 1px solid #ccc !important; padding: 6px !important; }
-            .no-print { display: none !important; }
+            .no-print, .service-item input[type="checkbox"], .pos-grid input[type="checkbox"] { display: none !important; }
+            .service-item { grid-template-columns: 1fr auto !important; }
         }
     </style>
 </head>
@@ -208,11 +207,75 @@
 
     <div class="section">
         <h3>Situazione Attuale</h3>
-        <div class="grid-inputs">
+        <div class="grid-inputs-3">
             <div><label>Transato Mensile (€)</label><input type="number" id="transatoAttuale" oninput="calcolaRealeAttuale()"></div>
             <div><label>Commissioni Pagate (€)</label><input type="number" id="costoAttuale" oninput="calcolaRealeAttuale()"></div>
+            <div><label>Canone POS Attuale (€)</label><input type="number" id="canoneAttuale" oninput="calcolaRealeAttuale()" value="0"></div>
         </div>
         <p style="font-size: 0.9em; margin-top: 10px;">Tasso reale attuale: <strong><span id="percRealeAttuale">0</span>%</strong></p>
+    </div>
+
+    <div class="section">
+        <h3>Servizi Dojo</h3>
+        <div class="service-item">
+            <input type="checkbox" id="srv_app" value="2.00">
+            <span class="service-title">App Dojo Business</span>
+            <span class="service-cost">€ 2,00 / mese</span>
+        </div>
+        <div class="service-item">
+            <input type="checkbox" id="srv_sim" value="5.00">
+            <span class="service-title">Sim 4G</span>
+            <span class="service-cost">€ 5,00 / mese</span>
+        </div>
+        <div class="service-item">
+            <input type="checkbox" id="srv_pbl" value="0.50">
+            <span class="service-title">Pay by Link</span>
+            <span class="service-cost">€ 0,50 / mese</span>
+        </div>
+        <div class="service-item">
+            <input type="checkbox" id="srv_pan" value="0.50">
+            <span class="service-title">Pan Manuale e Pre-autorizzazioni</span>
+            <span class="service-cost">€ 0,50 / mese</span>
+        </div>
+        <div class="service-item">
+            <input type="checkbox" id="srv_acc" value="2.00">
+            <span class="service-title">Accredito 7 giorni su 7</span>
+            <span class="service-cost">€ 2,00 / mese</span>
+        </div>
+        <div class="service-item">
+            <input type="checkbox" id="srv_int" value="5.00">
+            <span class="service-title">Piattaforma di integrazioni</span>
+            <span class="service-cost">€ 5,00 / mese</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Terminali Dojo</h3>
+        <div class="pos-grid-header">
+            <div></div>
+            <div>Modello POS</div>
+            <div>Canone Mese (€)</div>
+            <div>Quantità</div>
+        </div>
+        
+        <div class="pos-grid">
+            <input type="checkbox" id="check_go" onchange="togglePos('c_dojo_go', 'q_dojo_go', this)">
+            <span class="pos-title">Dojo Go</span>
+            <div><label>Canone:</label><input type="number" id="c_dojo_go" value="5" readonly disabled></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_go" value="0" min="0" disabled></div>
+        </div>
+        <div class="pos-grid">
+            <input type="checkbox" id="check_pocket" onchange="togglePos('c_dojo_pocket', 'q_dojo_pocket', this)">
+            <span class="pos-title">Dojo Pocket</span>
+            <div><label>Canone:</label><select id="c_dojo_pocket" disabled><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_pocket" value="0" min="0" disabled></div>
+        </div>
+        <div class="pos-grid">
+            <input type="checkbox" id="check_wired" onchange="togglePos('c_dojo_wired', 'q_dojo_wired', this)">
+            <span class="pos-title">Dojo Wired</span>
+            <div><label>Canone:</label><select id="c_dojo_wired" disabled><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
+            <div><label>Quantità:</label><input type="number" id="q_dojo_wired" value="0" min="0" disabled></div>
+        </div>
     </div>
 
     <div class="section">
@@ -288,31 +351,6 @@
         </table>
     </div>
 
-    <div class="section">
-        <h3>Terminali Dojo</h3>
-        <div class="pos-grid-header">
-            <div>Modello POS</div>
-            <div>Canone Mese (€)</div>
-            <div>Quantità</div>
-        </div>
-        
-        <div class="pos-grid">
-            <span class="pos-title">Dojo Go</span>
-            <div><label>Canone:</label><select id="c_dojo_go"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
-            <div><label>Quantità:</label><input type="number" id="q_dojo_go" value="0" min="0"></div>
-        </div>
-        <div class="pos-grid">
-            <span class="pos-title">Dojo Pocket</span>
-            <div><label>Canone:</label><select id="c_dojo_pocket"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
-            <div><label>Quantità:</label><input type="number" id="q_dojo_pocket" value="0" min="0"></div>
-        </div>
-        <div class="pos-grid">
-            <span class="pos-title">Dojo Wired</span>
-            <div><label>Canone:</label><select id="c_dojo_wired"><option value="20">20 €</option><option value="15">15 €</option><option value="10">10 €</option><option value="5">5 €</option><option value="3">3 €</option></select></div>
-            <div><label>Quantità:</label><input type="number" id="q_dojo_wired" value="0" min="0"></div>
-        </div>
-    </div>
-
     <div class="result-box" id="risultato">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
             <div style="border-right: 1px solid #444;">
@@ -334,11 +372,10 @@
 <div class="no-print">
     <button onclick="generaConfronto()">1. Calcola Risparmio</button>
     <button class="pdf-btn" onclick="salvaPDF()">2. Salva PDF</button>
-    <button class="link-btn" 
-            onclick="window.open('https://hub.paymentsense.com/landing', '_blank')" 
-            style="background: var(--dojo-green); border: 2px solid var(--dojo-black); color: var(--dojo-white);">
+    <a class="link-btn" href="https://sales.paymentsense.com/landing" target="_blank" 
+       style="background: var(--dojo-black); color: var(--dojo-white); border: 2px solid var(--dojo-black);">
         3. Inizia Preventivo
-    </button>
+    </a>
 </div>
 
 <script>
@@ -348,10 +385,30 @@ function calcolaRealeAttuale() {
     document.getElementById('percRealeAttuale').innerText = (t > 0) ? (c / t * 100).toFixed(2) : "0";
 }
 
-function generaConfronto() {
-    let costoAttuale = parseFloat(document.getElementById('costoAttuale').value) || 0;
+function togglePos(selectId, inputId, checkbox) {
+    const select = document.getElementById(selectId);
+    const input = document.getElementById(inputId);
     
-    // Valori Percentuali
+    select.disabled = !checkbox.checked;
+    input.disabled = !checkbox.checked;
+    
+    if (!checkbox.checked) {
+        if(selectId === 'c_dojo_go') {
+            input.value = 0;
+        } else {
+            input.value = 0;
+        }
+    } else {
+        if(parseInt(input.value) === 0) input.value = 1;
+    }
+}
+
+function generaConfronto() {
+    let commissioniAttuali = parseFloat(document.getElementById('costoAttuale').value) || 0;
+    let canoneAttuale = parseFloat(document.getElementById('canoneAttuale').value) || 0;
+    let costoAttualeTotale = commissioniAttuali + canoneAttuale;
+    
+    // Percentuali
     let p_pagoban = parseFloat(document.getElementById('p_pagoban').value) || 0;
     let p_debdom = parseFloat(document.getElementById('p_debdom').value) || 0;
     let p_credom = parseFloat(document.getElementById('p_credom').value) || 0;
@@ -361,7 +418,7 @@ function generaConfronto() {
     let p_discover = 1.99;
     let p_amex = 1.90;
 
-    // Valori Costi Fissi
+    // Costi Fissi
     let f_pagoban = parseFloat(document.getElementById('f_pagoban').value) || 0;
     let f_debdom = parseFloat(document.getElementById('f_debdom').value) || 0;
     let f_credom = parseFloat(document.getElementById('f_credom').value) || 0;
@@ -393,54 +450,38 @@ function generaConfronto() {
 
     let costoDojo = 0;
     
-    // Calcolo PagoBancomat
-    costoDojo += (t_pagoban * p_pagoban) / 100;
-    costoDojo += (n_pagoban * f_pagoban);
+    // Calcolo Carte Variabili
+    costoDojo += (t_pagoban * p_pagoban) / 100 + (n_pagoban * f_pagoban);
+    costoDojo += (t_debdom * p_debdom) / 100 + (n_debdom * f_debdom);
+    costoDojo += (t_credom * p_credom) / 100 + (n_credom * f_credom);
+    costoDojo += (t_eu * (p_credom + m_eu)) / 100 + (n_eu * f_eu);
+    costoDojo += (t_comm * p_comm) / 100 + (n_comm * f_comm);
+    costoDojo += (t_extra * (p_credom + m_extra)) / 100 + (n_extra * f_extra); 
+    costoDojo += (t_discover * p_discover) / 100 + (n_discover * f_discover);
+    costoDojo += (t_amex * p_amex) / 100 + (n_amex * f_amex);
 
-    // Calcolo Debito Domestico
-    costoDojo += (t_debdom * p_debdom) / 100;
-    costoDojo += (n_debdom * f_debdom);
+    // Calcolo Servizi Dojo Spuntati
+    if (document.getElementById('srv_app').checked) costoDojo += parseFloat(document.getElementById('srv_app').value);
+    if (document.getElementById('srv_sim').checked) costoDojo += parseFloat(document.getElementById('srv_sim').value);
+    if (document.getElementById('srv_pbl').checked) costoDojo += parseFloat(document.getElementById('srv_pbl').value);
+    if (document.getElementById('srv_pan').checked) costoDojo += parseFloat(document.getElementById('srv_pan').value);
+    if (document.getElementById('srv_acc').checked) costoDojo += parseFloat(document.getElementById('srv_acc').value);
+    if (document.getElementById('srv_int').checked) costoDojo += parseFloat(document.getElementById('srv_int').value);
 
-    // Calcolo Credito Domestico
-    costoDojo += (t_credom * p_credom) / 100;
-    costoDojo += (n_credom * f_credom);
+    // Calcolo Canoni Terminali Attivati
+    if (document.getElementById('check_go').checked) {
+        costoDojo += (parseFloat(document.getElementById('c_dojo_go').value) || 0) * (parseInt(document.getElementById('q_dojo_go').value) || 0);
+    }
+    if (document.getElementById('check_pocket').checked) {
+        costoDojo += (parseFloat(document.getElementById('c_dojo_pocket').value) || 0) * (parseInt(document.getElementById('q_dojo_pocket').value) || 0);
+    }
+    if (document.getElementById('check_wired').checked) {
+        costoDojo += (parseFloat(document.getElementById('c_dojo_wired').value) || 0) * (parseInt(document.getElementById('q_dojo_wired').value) || 0);
+    }
 
-    // Calcolo Carte EU
-    costoDojo += (t_eu * (p_credom + m_eu)) / 100;
-    costoDojo += (n_eu * f_eu);
-
-    // Calcolo Carte Commerciali
-    costoDojo += (t_comm * p_comm) / 100;
-    costoDojo += (n_comm * f_comm);
-    
-    // Calcolo Extra-EU
-    costoDojo += (t_extra * (p_credom + m_extra)) / 100;
-    costoDojo += (n_extra * f_extra); 
-
-    // Calcolo Discover Diners Club
-    costoDojo += (t_discover * p_discover) / 100;
-    costoDojo += (n_discover * f_discover);
-
-    // Calcolo American Express
-    costoDojo += (t_amex * p_amex) / 100;
-    costoDojo += (n_amex * f_amex);
-
-    // CALCOLO SINGOLI CANONI INDIPENDENTI TERMINALI
-    let c_go = parseFloat(document.getElementById('c_dojo_go').value) || 0;
-    let q_go = parseInt(document.getElementById('q_dojo_go').value) || 0;
-    costoDojo += (c_go * q_go);
-
-    let c_pocket = parseFloat(document.getElementById('c_dojo_pocket').value) || 0;
-    let q_pocket = parseInt(document.getElementById('q_dojo_pocket').value) || 0;
-    costoDojo += (c_pocket * q_pocket);
-
-    let c_wired = parseFloat(document.getElementById('c_dojo_wired').value) || 0;
-    let q_wired = parseInt(document.getElementById('q_dojo_wired').value) || 0;
-    costoDojo += (c_wired * q_wired);
-
-    document.getElementById('resAttuale').innerText = costoAttuale.toFixed(2);
+    document.getElementById('resAttuale').innerText = costoAttualeTotale.toFixed(2);
     document.getElementById('resNuovo').innerText = costoDojo.toFixed(2);
-    let risparmioMese = costoAttuale - costoDojo;
+    let risparmioMese = costoAttualeTotale - costoDojo;
     document.getElementById('resRisparmioAnno').innerText = (risparmioMese * 12).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
     
     document.getElementById('risultato').style.display = 'block';
